@@ -7,6 +7,22 @@ const cors = require("cors");
 const errorHandler = require("./middleware/errorHandler");
 const itemRoutes = require("./routes/items");
 const fetchRoutes = require("./routes/fetch");
+const fetchPricing = require("./services/fetchPricing");
+const organizeData = require("./services/organizeData");
+const sortData = require("./services/sortData");
+
+async function updateData() {
+  try {
+    await fetchPricing();
+    await organizeData();
+    await sortData();
+  } catch (error) {
+    console.error(`Failed to update data: ${error}`);
+    throw error;
+  }
+}
+
+updateData();
 
 app.use(cors());
 
