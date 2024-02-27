@@ -4,10 +4,21 @@ const path = require("path");
 
 async function fetchSteamPricing() {
   try {
-    const response = await axios.get("http://localhost:3500/api");
+    const response = await axios.get(
+      "https://csgobackpack.net/api/GetItemsList/v2/"
+    );
 
     const filePath = path.join(__dirname, "../data/steamData.json");
-
+    await fs.mkdir(
+      path.join(__dirname, "../data"),
+      { recursive: true },
+      (err) => {
+        if (err) {
+          console.error(`Failed to create directory: ${err}`);
+          throw err;
+        }
+      }
+    );
     await fs.writeFile(filePath, JSON.stringify(response.data), "utf-8");
   } catch (error) {
     console.error(`Failed to get steam data: ${error}`);
