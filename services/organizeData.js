@@ -31,32 +31,40 @@ async function organizeData() {
       const steamItem = encoded || notEncoded;
 
       if (steamItem) {
-        const steamPrice =
-          steamItem.price?.["7_days"]?.average ||
-          steamItem.price?.["30_days"]?.average ||
-          steamItem.price?.["all_time"].average ||
-          0;
+        const steamPrice = steamItem.price?.["7_days"]?.average || 0;
 
-        const steamSold =
-          steamItem.price?.["7_days"]?.sold ||
-          steamItem.price?.["30_days"]?.sold ||
-          steamItem.price?.["all_time"].sold ||
-          0;
+        const steamSold = steamItem.price?.["7_days"]?.sold || 0;
         acc.push({
           name: item.market_hash_name,
-          id: steamItem.classid,
+          classId: steamItem.classid,
           steamPrice,
           steamSold,
           skinportPrice: item.min_price,
           skinportVolume: item.quantity,
-          profitWOFee:
-            item.quantity === 0
+          liquidity:
+            steamSold <= 20 || item.quantity < 5
               ? 0
-              : Number((steamPrice - item.min_price).toFixed(2)),
-          profitWFee:
+              : steamSold < 75 || item.quantity < 25
+              ? 1
+              : 2,
+          topupAmount: Number((steamPrice / 1.15 - 0.01).toFixed(2)),
+          profit:
             item.quantity === 0
               ? 0
               : Number((steamPrice / 1.15 - 0.01 - item.min_price).toFixed(2)),
+
+          percentProfit:
+            item.quantity === 0
+              ? 0
+              : Number(
+                  (
+                    ((steamPrice / 1.15 - 0.01 - item.min_price) /
+                      item.min_price) *
+                    100
+                  ).toFixed(2)
+                ),
+          market_page: item.market_page,
+          iconUrl: steamItem.icon_url,
         });
       }
       return acc;

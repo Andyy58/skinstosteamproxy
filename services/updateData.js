@@ -4,9 +4,10 @@ const sortData = require("./sortData");
 
 async function updateData() {
   try {
-    await fetchPricing();
+    /* await fetchPricing(); */
     await organizeData();
     await sortData();
+    console.log("Data updated");
   } catch (error) {
     console.error(`Failed to update data: ${error}`);
     throw error;
